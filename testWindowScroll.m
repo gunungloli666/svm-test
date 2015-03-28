@@ -6,6 +6,7 @@ clc;
 f = figure('WindowScrollWheelFcn',@sliderHandle,'menubar', 'none' ); 
 ax = axes('parent', f, 'units', 'pix' ); 
 im = (imread('gambar 1/lion-test.jpg')); % disesuaikan 
+
 imshow(im,'parent', ax); 
 
 sizeImage = size(im);
@@ -47,14 +48,13 @@ blurImage(initD);
     function blurImage(d)
         if d < maxD
             [xx,yy] = ndgrid(( 1:h )-halfH , ( 1:w ) - halfW ) ; 
-            mask = uint8( ( xx.^2 + yy.^2 ) < d^2); 
+            mask = uint8( ( xx.^2 + yy.^2 ) > d^2);
+            G = fspecial('disk', 10); 
             cropped = uint8(zeros(sizeImage)); 
-            cropped(:,:,1) = im(:,:,1).*mask; 
-            cropped(:,:,2) = im(:,:,2).*mask; 
-            cropped(:,:,3) = im(:,:,3).*mask; 
-            G = fspecial('gaussian',[4 4], 0.5);
-            im = roifilt2( G , im , cropped );
-            imshow(cropped);  
+            cropped(:,:,1) = roifilt2(G ,im(:,:,1) , mask ); 
+            cropped(:,:,2) = roifilt2(G ,im(:,:,2) , mask ); 
+            cropped(:,:,3) = roifilt2(G ,im(:,:,3) , mask ); 
+            imshow( cropped );  
             drawnow; 
         end
     end
